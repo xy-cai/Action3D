@@ -1,0 +1,17 @@
+function JointIndex = detectImportJoint(filename)
+    fid = fopen(filename, 'r');
+    if (fid > 0)
+        A = fscanf(fid, '%f');
+        fclose(fid);
+        len = size(A,1)/4;
+        A = reshape(A,4,len);
+        A = A';
+        A = reshape(A, 20, len/20, 4);
+        fclose(fid);
+        
+        
+        
+    else
+        JointIndex = -1;
+    end
+end
