@@ -1,6 +1,6 @@
-dataset\*
-papers\*
-result\*
+dataset/*
+papers/*
+result/*
 
 
 #################
