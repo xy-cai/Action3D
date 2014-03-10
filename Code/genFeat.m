@@ -31,13 +31,13 @@ for a = 1:20
                         feat{a,s,e}(cnt:cnt+2) = motion_vector_20_3{a,s,e}{f,j}(1:3);
                         cnt = cnt+3;
                     end
-                    for j = 1:size(relative_pos{a,s,e},2)
-                        feat{a,s,e}(cnt:cnt+2) = relative_pos{a,s,e}{f,j}(1:3);
+                    for j = 1:size(relative_pos_57{a,s,e},2)
+                        feat{a,s,e}(cnt:cnt+2) = relative_pos_57{a,s,e}{f,j}(1:3);
                         cnt = cnt+3;
                     end
                     feat{a,s,e}(cnt:cnt+59) = moving_pose{a,s,e}{f}(1:60);
                     cnt = cnt+60;
-                    feat{a,s,e}(cnt:cnt+399) = moving_vector_20_20{a,s,e}{f}(1:400);
+                    feat{a,s,e}(cnt:cnt+399) = motion_vector_20_20{a,s,e}{f}(1:400);
                     cnt = cnt+400;
                     feat{a,s,e}(cnt:cnt+189) = relations_20_19{a,s,e}{f}(1:190);
                     cnt = cnt+190;
@@ -46,4 +46,6 @@ for a = 1:20
         end
     end
 end
+
+save '../result/feat/feat.mat' feat
             
