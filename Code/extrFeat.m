@@ -99,7 +99,7 @@ save '../result/feat/directed_area.mat' directed_area
 
 %% relative position (20-1)*3 = 57 [ICCV13 GSGC-DL]
 % relative_position{a,s,e}{f,j} action a, subject s, environment e, frame f,
-% limb j
+% limb j 4x1
 
 display('relative position (20-1)*3 = 57 [ICCV13 GSGC-DL]');
 
@@ -113,7 +113,7 @@ for a = 1:20
                 for j = 1:size(J,2)
                     p1 = squeeze(dataIn(J(1,j),f,:));
                     p2 = squeeze(dataIn(J(2,j),f,:));
-                    relative_pos_57_one_video{f,j} = [p2(1:3)-p1(1:3), (p2(4)+p1(4))/2];
+                    relative_pos_57_one_video{f,j} = [p2(1:3)-p1(1:3); (p2(4)+p1(4))/2];
                 end
             end
             relative_pos_57{a,s,e} = relative_pos_57_one_video;
@@ -124,7 +124,7 @@ end
 save '../result/feat/relative_pos_57.mat' relative_pos_57
 
 %% motion vector 20*3 [...]
-% motion_vector_20_3{a,s,e}{f,j} f start from 2 
+% motion_vector_20_3{a,s,e}{f,j} f start from 2 4x1
 
 display('motion vector 20*3 [...]');
 motion_vector_20_3 = cell(20,10,3);
@@ -136,9 +136,9 @@ for a = 1:20
             motion_vector_20_3_one_video = cell(size(dataIn,2),size(dataIn,1));
             for f = 2:size(dataIn,2)
                 for j = 1:size(dataIn,1)
-                    p1 = dataIn(j, f, :);
-                    p2 = dataIn(j, f-1, :);
-                    motion_vector_20_3_one_video{f,j} = [p1(1:3)-p2(1:3), (p1(4)-p2(4))/2];
+                    p1 = squeeze(dataIn(j, f, :));
+                    p2 = squeeze(dataIn(j, f-1, :));
+                    motion_vector_20_3_one_video{f,j} = [p1(1:3)-p2(1:3); (p1(4)+p2(4))/2];
                 end
             end
             motion_vector_20_3{a,s,e} = motion_vector_20_3_one_video;
@@ -239,11 +239,11 @@ for a = 1:20
                 Pm1 = zeros(size(dataIn,1)*3,1);
                 Pm2 = zeros(size(dataIn,1)*3,1);
                 for i = 1:size(dataIn,1)
-                    P2((i-1)*3+1:i*3) = dataIn(i, f+2, 1:3);
-                    P1((i-1)*3+1:i*3) = dataIn(i, f+1, 1:3);
-                    P0((i-1)*3+1:i*3) = dataIn(i, f, 1:3);
-                    Pm1((i-1)*3+1:i*3) = dataIn(i, f-1, 1:3);
-                    Pm2((i-1)*3+1:i*3) = dataIn(i, f-2, 1:3);
+                    P2((i-1)*3+1:i*3) = squeeze(dataIn(i, f+2, 1:3));
+                    P1((i-1)*3+1:i*3) = squeeze(dataIn(i, f+1, 1:3));
+                    P0((i-1)*3+1:i*3) = squeeze(dataIn(i, f, 1:3));
+                    Pm1((i-1)*3+1:i*3) = squeeze(dataIn(i, f-1, 1:3));
+                    Pm2((i-1)*3+1:i*3) = squeeze(dataIn(i, f-2, 1:3));
                 end
                 moving_pose_one_video{f} = [P0, alpha*(P1-Pm1), beta*(P2+Pm2-2*P0)];
             end
