@@ -172,7 +172,7 @@ for a = 1:20
                         sum_prob = sum_prob + p1(4)+p2(4);
                     end
                 end
-                motion_vector_20_20_one_video{f}(size(dataIn,1)*size(dataIn,1)+1) = sum_porb/(2*size(dataIn,1)*size(dataIn,1));
+                motion_vector_20_20_one_video{f}(size(dataIn,1)*size(dataIn,1)+1) = sum_prob/(2*size(dataIn,1)*size(dataIn,1));
                 
             end
             motion_vector_20_20{a,s,e} = motion_vector_20_20_one_video;
@@ -219,7 +219,7 @@ save '../result/feat/relations_20_19.mat' relations_20_19
 %% Dist paired joints norm by path [MM13]
 
 %% Moving Pose [ICCV 13]
-% moving_pose{a,s,e}{f} f start from 3, end to size(dataIn,2)-2
+% moving_pose{a,s,e}{f} f start from 3, end to size(dataIn,2)-2 (60*3+1)x1
 
 display('Moving Pose [ICCV 13]');
 
@@ -238,14 +238,17 @@ for a = 1:20
                 P0 = zeros(size(dataIn,1)*3,1);
                 Pm1 = zeros(size(dataIn,1)*3,1);
                 Pm2 = zeros(size(dataIn,1)*3,1);
+                sum_prob = 0;
                 for i = 1:size(dataIn,1)
                     P2((i-1)*3+1:i*3) = squeeze(dataIn(i, f+2, 1:3));
                     P1((i-1)*3+1:i*3) = squeeze(dataIn(i, f+1, 1:3));
                     P0((i-1)*3+1:i*3) = squeeze(dataIn(i, f, 1:3));
                     Pm1((i-1)*3+1:i*3) = squeeze(dataIn(i, f-1, 1:3));
                     Pm2((i-1)*3+1:i*3) = squeeze(dataIn(i, f-2, 1:3));
+                    sum_prob = sum_prob + sum(squeeze(dataIn(i, f-2:f+2, 4)));
                 end
-                moving_pose_one_video{f} = [P0, alpha*(P1-Pm1), beta*(P2+Pm2-2*P0)];
+                sum_prob = sum_prob/(5*size(dataIn,1));
+                moving_pose_one_video{f} = [P0; alpha*(P1-Pm1); beta*(P2+Pm2-2*P0); sum_prob];
             end
             moving_pose{a,s,e} = moving_pose_one_video;
         end
