@@ -67,10 +67,11 @@ load ../result/joint_data.mat;
 % end
 
 %% extr area 19*3
-
-directed_area = cell(20,10,3);
 % directed_area{a,s,e}{f,j} action a, subject s, environment e, frame f,
 % limb j; f start from 2
+
+display('extr area 19*3');
+directed_area = cell(20,10,3);
 
 for a = 1:20
     for s = 1:10
@@ -94,10 +95,13 @@ for a = 1:20
     end
 end
 
-%% relative position (20-1)*3 = 57 [ICCV13 GSGC-DL]
+save '../result/feat/directed_area.mat' directed_area
 
+%% relative position (20-1)*3 = 57 [ICCV13 GSGC-DL]
 % relative_position{a,s,e}{f,j} action a, subject s, environment e, frame f,
 % limb j
+
+display('relative position (20-1)*3 = 57 [ICCV13 GSGC-DL]');
 
 relative_pos_57 = cell(20,10,3);
 for a = 1:20
@@ -117,18 +121,46 @@ for a = 1:20
     end
 end
 
-%% motion vector 20*20 [IJCV 13 Accuracy and Observational]
+save '../result/feat/relative_pos_57.mat' relative_pos_57
 
-% motion_vector_20_20{a,s,e}{f} (400+1)x1 action a, subject s, enviroment e, frame
-% f; f start from 2
+%% motion vector 20*3 [...]
+% motion_vector_20_3{a,s,e}{f,j} f start from 2 
 
-motion_vector_20_20 = cell(20,10,3)
+display('motion vector 20*3 [...]');
+motion_vector_20_3 = cell(20,10,3);
 
 for a = 1:20
     for s = 1:10
         for e = 1:3
             dataIn = joint_data{a,s,e};
-            motion_vector_20_20_one_video = cell(size(dataIn,2));
+            motion_vector_20_3_one_video = cell(size(dataIn,2),size(dataIn,1));
+            for f = 2:size(dataIn,2)
+                for j = 1:size(dataIn,1)
+                    p1 = dataIn(j, f, :);
+                    p2 = dataIn(j, f-1, :);
+                    motion_vector_20_3_one_video{f,j} = [p1(1:3)-p2(1:3), (p1(4)-p2(4))/2];
+                end
+            end
+            motion_vector_20_3{a,s,e} = motion_vector_20_3_one_video;
+        end
+    end
+end
+
+save '../result/feat/motion_vector_20_3.mat' motion_vector_20_3
+
+%% motion vector 20*20 [IJCV 13 Accuracy and Observational]
+% motion_vector_20_20{a,s,e}{f} (400+1)x1 action a, subject s, enviroment e, frame
+% f; f start from 2
+
+display('motion vector 20*20 [IJCV 13 Accuracy and Observational]')
+
+motion_vector_20_20 = cell(20,10,3);
+
+for a = 1:20
+    for s = 1:10
+        for e = 1:3
+            dataIn = joint_data{a,s,e};
+            motion_vector_20_20_one_video = cell(size(dataIn,2),1);
             for f = 2:size(dataIn,2)
                 motion_vector_20_20_one_video{f} = zeros(size(dataIn,1)*size(dataIn,1)+1,1);
                 sum_prob = 0;
@@ -148,9 +180,12 @@ for a = 1:20
     end
 end
 
-%% relations of every paired joint 20*19/2 [IJCV 13 Accuracy and Observational]
+save '../result/feat/motion_vector_20_20.mat' motion_vector_20_20
 
+%% relations of every paired joint 20*19/2 [IJCV 13 Accuracy and Observational]
 % relations_20_19{a,s,e}{f} action a subject s enviroment e frame f 190x1
+
+display('relations of every paired joint 20*19/2 [IJCV 13 Accuracy and Observational]');
 
 relations_20_19 = cell(20,10,3);
 
@@ -158,7 +193,7 @@ for a = 1:20
     for s = 1:10
         for e = 1:3
             dataIn = joint_data{a,s,e};
-            relations_20_19_one_video = cell{size(dataIn,2)};
+            relations_20_19_one_video = cell(size(dataIn,2),1);
             for f = 1:size(dataIn,2)
                 relations_20_19_one_video{f} = zeros(size(dataIn,1)*(size(dataIn,1)-1)/2+1,1);
                 sum_prob = 0;
@@ -179,11 +214,14 @@ for a = 1:20
     end
 end
 
+save '../result/feat/relations_20_19.mat' relations_20_19
+
 %% Dist paired joints norm by path [MM13]
 
 %% Moving Pose [ICCV 13]
-
 % moving_pose{a,s,e}{f} f start from 3, end to size(dataIn,2)-2
+
+display('Moving Pose [ICCV 13]');
 
 moving_pose = cell(20,10,3);
 alpha = 0.75;
@@ -193,7 +231,7 @@ for a = 1:20
     for s = 1:10
         for e = 1:3
             dataIn = joint_data{a,s,e};
-            moving_pose_one_video = cell{size(dataIn,2)};
+            moving_pose_one_video = cell(size(dataIn,2),1);
             for f = 3:size(dataIn,2)-2
                 P2 = zeros(size(dataIn,1)*3,1);
                 P1 = zeros(size(dataIn,1)*3,1);
@@ -209,11 +247,12 @@ for a = 1:20
                 end
                 moving_pose_one_video{f} = [P0, alpha*(P1-Pm1), beta*(P2+Pm2-2*P0)];
             end
+            moving_pose{a,s,e} = moving_pose_one_video;
         end
     end
 end
 
-%% motion vector (20-1)*3 [...]
+save '../result/feat/moving_pose.mat' moving_pose
  
 %% LO
 
