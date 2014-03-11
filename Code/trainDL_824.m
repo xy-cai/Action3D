@@ -2,8 +2,8 @@ function trainDL_824
 % DBN by rasmusbergpalm 
 % HMM by Murphy
 
-addpath(genpath('HMM/'));
-addpath(genpath('DeepLearnToolbox'));
+addpath(genpath('../util/HMM/'));
+addpath(genpath('../util/DeepLearnToolbox'));
 
 %% load feat
 load '../result/feat/feat.mat';
@@ -67,13 +67,15 @@ opts.batchsize = 100;
 nn = nntrain(nn, train_x, train_y, opts);
 labels = nnpredict(nn, test_x);
 confmat = zeros(20,20);
+i = 1;
 for a = 1:20
     for s = 1:10
         for e = 3:3
             if size(feat{a,s,e},1)~=0
                 cnt = zeros(20,1);
                 for f = 1:size(feat{a,s,e},2)
-                    cnt(labels) = cnt(labels)+1;
+                    cnt(labels(i)) = cnt(labels(i))+1;
+                    i = i+1;
                 end
                 [~,ind] = max(cnt);
                 confmat(a,ind) = confmat(a,ind)+1;
@@ -81,7 +83,7 @@ for a = 1:20
         end
     end
 end
-save DLconfmat.mat confmat
+save '../result/DLconfmat.mat' confmat
 
 %% PCA
 
