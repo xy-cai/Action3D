@@ -1,6 +1,7 @@
 dataset/*
 papers/*
 result/*
+util/*
 
 #################
 ## MATLAB
