@@ -14,7 +14,7 @@ load '../result/feat/motion_vector_20_20.mat';
 load '../result/feat/relations_20_19.mat';
 
 % 19*3+20*3+19*3+60*3+400+190
-fdim = 824;
+fdim = 944;
 feat = cell(20,10,3);
 for a = 1:20
     for s = 1:10
