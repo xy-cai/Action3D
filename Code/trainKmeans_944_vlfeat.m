@@ -1,10 +1,11 @@
-function trainKmeans_824
+function trainKmeans_944_vlfeat
 
 clc;
 clear all;
 close all;
 
-% run('../util/vlfeat-0.9.18/toolbox/vl_setup.m');
+run('../util/vlfeat-0.9.18/toolbox/vl_setup');
+% addpath(genpath('../util/vlfeat-0.9.18/toolbox/'));
 
 %% load feat
 load '../result/feat/feat.mat';
@@ -36,13 +37,13 @@ end
 
 %% kmeans
 k_center = 50;
-[train_idx,ctr] = kmeans(train_feat(1:824,:)', k_center, 'emptyaction', 'singleton');
+[ctr,train_idx] = vl_kmeans(train_feat(1:944,:), k_center);
 test_idx = zeros(size(test_feat,2),1);
 for i = 1:size(test_feat,2)
-    [~,test_idx(i)] = max(sum((repmat(test_feat(1:824,i),[1,k_center])'-ctr).^2,1));
+    [~,test_idx(i)] = min(sum((repmat(test_feat(1:944,i),[1,k_center])-ctr).^2,1));
 end
 i = 1;
-fid = fopen('../result/[SVM]kmeans_histo_train.txt','w');
+fid = fopen('../result/[SVM]vlkmeans_histo_train.txt','w');
 for a = 1:20
     for s = 1:10
         for e = 1:2
@@ -63,7 +64,7 @@ for a = 1:20
 end
 fclose(fid);
 i = 1;
-fid = fopen('../result/[SVM]kmeans_histo_test.txt','w');
+fid = fopen('../result/[SVM]vlkmeans_histo_test.txt','w');
 for a = 1:20
     for s = 1:10
         for e = 3:3

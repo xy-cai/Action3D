@@ -1,4 +1,4 @@
-function genFeat
+function genRefinedFeat
 
 clc;
 clear all;

@@ -1,4 +1,4 @@
-function trainDL_824
+function trainDL_944
 % DBN by rasmusbergpalm 
 % HMM by Murphy
 
