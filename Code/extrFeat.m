@@ -6,15 +6,18 @@ close all;
 
 J=[20     3     3     1     8     10    2     9    11   3   4    7     7     5     6    14    15    16  17;
     3     1     2     8    10     12    9    11    13   4   7    5     6    14    15    16    17    18  19];
+Jhip = [7     7     5     6    14    15    16  17   7   4   3   3   3   1   8   10  2   9   11;
+        5     6    14    15    16    17    18  19   4   3  20   1   2   8  10   12  9  11   13];
+Jind = [12,     13,14,15,16,17,18,19,11,10,1,2,3,4,5,6,7,8,9];
 
 %% load data
 
-% datapath = '../dataset/MSRAction3DSkeleton(20joints)/';
+% datapath = '../dataset/MSRAction3DSkeletonReal3D/';
 % joint_data = cell(20,10,10);
 % for a = 1:20
 %     for s = 1:10
 %         for e = 1:3
-%             datafn = sprintf('a%02d_s%02d_e%02d_skeleton.txt', a, s, e);
+%             datafn = sprintf('a%02d_s%02d_e%02d_skeleton3D.txt', a, s, e);
 %             fid = fopen([datapath datafn], 'r');
 %             dataIn = [];
 %             if fid > 0
@@ -28,34 +31,108 @@ J=[20     3     3     1     8     10    2     9    11   3   4    7     7     5  
 %         end
 %     end
 % end
-% save '../result/joint_data.mat' joint_data;
+% 
+% save '../result/joint_data3D.mat' joint_data;
 
-load ../result/joint_data.mat;
+load ../result/joint_data3D.mat;
 
-%% norm & revise
-
-
-%% visualization
-
+%% stat limbline
+% limbline = zeros(size(J,2),1);
 % for a = 1:20
-%     for s = 2:2
+%     for s = 1:10
 %         for e = 1:3
 %             dataIn = joint_data{a,s,e};
 %             if size(dataIn,1)~=0
 %                 x = dataIn(:,:,1);
-%                 y = dataIn(:,:,3)/4;
-%                 z = 400-dataIn(:,:,2);
+%                 y = dataIn(:,:,3);
+%                 z = dataIn(:,:,2);
 %                 for f = 1:size(dataIn,2)
-%                     xlim = [0 800]; ylim = [0 800]; zlim = [0 800];
+%                     fprob = sum(dataIn(:,f,4))/size(dataIn,1);
+%                     xlim = [-5 5]; ylim = [-5 5]; zlim = [-5 5];
 %                     set(gca, 'xlim', xlim, 'ylim', ylim, 'zlim', zlim);
 %                     plot3(x(:,f),y(:,f),z(:,f),'black.', 'MarkerSize', 15);
 %                     set(gca,'DataAspectRatio',[1 1 1])
-%                     axis([70 220 100 250 175 325]);
+%                     axis([-2,0,0,2,0,2]);
 %                     hold on;
+%                     tlimbline = zeros(size(J,2),1);
 %                     for j = 1:size(J,2)
+%                         tlimbline(j) = sum([x(J(1,j),f)-x(J(2,j),f), y(J(1,j),f)-y(J(2,j),f), ...
+%                             z(J(1,j),f)-z(J(2,j),f)].^2);
 %                         lineP = [x(J(1,j),f),y(J(1,j),f),z(J(1,j),f);
 %                               x(J(2,j),f),y(J(2,j),f),z(J(2,j),f)]';
 %                         line(lineP(1,:),lineP(2,:),lineP(3,:),'LineWidth',2);
+%                     end
+% %                     display(sprintf('%f', fprob));
+%                     if fprob > 0.75
+%                         limbline = limbline + tlimbline;
+%                         display(sprintf('%f ', tlimbline./tlimbline(11)));
+%                     end
+%                     hold off;
+% %                     pause(1/20);
+% %                     pause;
+%                 end
+%             end
+%         end
+%     end
+% end
+% 
+% limbline = limbline./(limbline(11));
+% save ../result/limblineratio.mat limbline
+
+load ../result/limblineratio.mat;
+%% norm & revise
+
+for a = 1:20
+    for s = 1:10
+        for e = 1:3
+            dataIn = joint_data{a,s,e};
+            for f = 1:size(dataIn,2)
+                pnorm = zeros(size(dataIn,1),1,3);
+                pnorm(7,:,:) = [0,0,0];
+                for j = 1:size(Jhip,2)
+                    p1 = dataIn(Jhip(1,j),f,1:3);
+                    p2 = dataIn(Jhip(2,j),f,1:3);
+                    dist = sqrt(sum((p2-p1).^2));
+                    limb_norm = sqrt(limbline(Jind(j)))/dist.*(p2-p1);
+                    pnorm(Jhip(2,j),:,:) = pnorm(Jhip(1,j),:,:)+limb_norm;
+                end
+                dataIn(:,f,1:3) = pnorm;
+            end
+            joint_data{a,s,e} = dataIn;
+        end
+    end
+end
+
+%% visualization
+% limbline = zeros(size(J,2),1);
+% for a = 1:20
+%     for s = 1:10
+%         for e = 1:3
+%             dataIn = joint_data{a,s,e};
+%             if size(dataIn,1)~=0
+%                 x = dataIn(:,:,1);
+%                 y = dataIn(:,:,3);
+%                 z = dataIn(:,:,2);
+%                 for f = 1:size(dataIn,2)
+%                     fprob = sum(dataIn(:,f,4))/size(dataIn,1);
+%                     xlim = [-5 5]; ylim = [-5 5]; zlim = [-5 5];
+%                     set(gca, 'xlim', xlim, 'ylim', ylim, 'zlim', zlim);
+%                     plot3(x(:,f),y(:,f),z(:,f),'black.', 'MarkerSize', 15);
+%                     set(gca,'DataAspectRatio',[1 1 1])
+%                     axis([-3,3,-3,3,-3,3]);
+%                     hold on;
+%                     tlimbline = zeros(size(J,2),1);
+%                     for j = 1:size(J,2)
+%                         tlimbline(j) = sum([x(J(1,j),f)-x(J(2,j),f), y(J(1,j),f)-y(J(2,j),f), ...
+%                             z(J(1,j),f)-z(J(2,j),f)].^2);
+%                         lineP = [x(J(1,j),f),y(J(1,j),f),z(J(1,j),f);
+%                               x(J(2,j),f),y(J(2,j),f),z(J(2,j),f)]';
+%                         line(lineP(1,:),lineP(2,:),lineP(3,:),'LineWidth',2);
+%                     end
+% %                     display(sprintf('%f', fprob));
+%                     if fprob > 0.5
+%                         limbline = limbline + tlimbline;
+%                         display(sprintf('%f ', tlimbline./tlimbline(11)));
 %                     end
 %                     hold off;
 %                     pause(1/20);

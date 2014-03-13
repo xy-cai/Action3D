@@ -17,12 +17,16 @@ load ../result/joint_data.mat;
 %% show each dim of feat and its confidence
 figure(1);
 title('relative position 57');
+cntvalid = 0;
+cntall = 0;
 for a = 1:20
     for s = 1:10
         for e = 1:3
             dataIn = joint_data{a,s,e};
             for f = 1:size(relative_pos_57{a,s,e},1)
-                if sum(dataIn(:,f,4))/size(dataIn,1) > 0.4
+                cntall = cntall + 1;
+                if sum(dataIn(:,f,4))/size(dataIn,1) > 0.5
+                    cntvalid = cntvalid + 1;
                     for j = 1:size(relative_pos_57{a,s,e},2)
                         blueratio = 1-relative_pos_57{a,s,e}{f,j}(4);
                         redratio = relative_pos_57{a,s,e}{f,j}(4);
@@ -43,6 +47,7 @@ for a = 1:20
     end
 end
 hold off;
+cntvalid/cntall
 
 figure(2);
 title('motion vector 60');
@@ -51,7 +56,7 @@ for a = 1:20
         for e = 1:3
             dataIn = joint_data{a,s,e};
             for f = 2:size(motion_vector_20_3{a,s,e},1)
-                if sum(dataIn(:,f,4))/size(dataIn,1) > 0.4
+                if sum(dataIn(:,f,4))/size(dataIn,1) > 0.5
                     for j = 1:size(motion_vector_20_3{a,s,e},2)
                         blueratio = 1-motion_vector_20_3{a,s,e}{f,j}(4);
                         redratio = motion_vector_20_3{a,s,e}{f,j}(4);

@@ -7,11 +7,12 @@ close all;
 % run('../util/vlfeat-0.9.18/toolbox/vl_setup.m');
 
 %% load feat
-load '../result/feat/feat.mat';
+% load '../result/feat/feat.mat';
+load '../result/feat/refined_feat.mat';
 train_feat = [];
 for a = 1:20
-    for s = 1:10
-        for e = 1:2
+    for s = 1:5
+        for e = 1:3
             if size(feat{a,s,e},1)~=0
                 for f = 1:size(feat{a,s,e},2)
                     train_feat = [train_feat,[feat{a,s,e}(:,f);a]];
@@ -23,8 +24,8 @@ end
 
 test_feat = [];
 for a = 1:20
-    for s = 1:10
-        for e = 3:3
+    for s = 6:10
+        for e = 1:3
             if size(feat{a,s,e},1)~=0
                 for f = 1:size(feat{a,s,e},2)
                     test_feat = [test_feat,[feat{a,s,e}(:,f);a]];
@@ -42,10 +43,10 @@ for i = 1:size(test_feat,2)
     [~,test_idx(i)] = min(sum((repmat(test_feat(355:944,i),[1,k_center])'-ctr).^2,2));
 end
 i = 1;
-fid = fopen('../result/[SVM]kmeans_histo_train.txt','w');
+fid = fopen('../result/[SVM]kmeans_histo_train_refinedfeat.txt','w');
 for a = 1:20
-    for s = 1:10
-        for e = 1:2
+    for s = 1:5
+        for e = 1:3
             rep = zeros(k_center,1);
             if size(feat{a,s,e},1)~=0
                 fprintf(fid, '%d', a);
@@ -63,10 +64,10 @@ for a = 1:20
 end
 fclose(fid);
 i = 1;
-fid = fopen('../result/[SVM]kmeans_histo_test.txt','w');
+fid = fopen('../result/[SVM]kmeans_histo_test_refinedfeat.txt','w');
 for a = 1:20
-    for s = 1:10
-        for e = 3:3
+    for s = 6:10
+        for e = 1:3
             rep = zeros(k_center,1);
             if size(feat{a,s,e},1)~=0
                 fprintf(fid, '%d', a);
