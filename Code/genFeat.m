@@ -2,7 +2,7 @@ function genFeat
 
 clc;
 clear all;
-close all;
+close all;  
 
 %% load feat
 
