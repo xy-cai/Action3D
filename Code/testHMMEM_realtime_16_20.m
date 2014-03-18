@@ -1,4 +1,4 @@
-function testHMMEM
+function testHMMEM_realtime_16_20
 
 %% load quantization feat
 load ../result/limb_feat.mat
@@ -64,7 +64,8 @@ end
 load ../result/mhmm_20.mat
 
 rec = [];
-for r = 1:5
+
+for r = 16:20
     confmat = zeros(20,20);
     for a = 1:20
         for j = 1:size(te_hmm{a},1)
@@ -86,7 +87,7 @@ for r = 1:5
     acc = sum(diag(confmat./repmat(sum(confmat,2),[1, 20])));
     rec = [rec,[r;acc]];
 end
-save ../result/testHMMEM_realtime_rec_1_5.mat rec
+save ../result/testHMMEM_realtime_rec_16_20.mat rec
 save ../result/testHMMEM_confmat.mat confmat
 
 end

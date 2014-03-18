@@ -57,63 +57,63 @@ for a = 1:20
     end
 end
 
-save '../result/limb_feat_forhmm.mat' limb_feat
+save '../result/limb_feat.mat' limb_feat
 
 load ../result/limb_feat.mat;
 
 %% split training & test set
-train_limb_feat = cell(size(J,2),1);
-train_af_info = [];
-train_n_frames = cell(20,10,3);
-
-for a = 1:20
-    for s = 1:10
-        for e = 1:2
-            if size(limb_feat{a,s,e},1) == 0 
-                continue; 
-            end
-            for j = 1:size(J,2)
-                train_limb_feat{j} = [train_limb_feat{j}; limb_feat{a,s,e}(:, (j-1)*limbdim+1:j*limbdim)];
-            end
-            train_af_info = [train_af_info; repmat([a,s,e], [size(limb_feat{a,s,e},1),1])];
-            train_n_frames{a,s,e} = size(limb_feat{a,s,e},1);
-        end
-    end
-end
-
-test_limb_feat = cell(size(J,2),1);
-test_af_info = [];
-test_n_frames = cell(20,10,3);
-for a = 1:20
-    for s = 1:10
-        for e = 3:3
-            if size(limb_feat{a,s,e},1) == 0 
-                continue; 
-            end
-            for j = 1:size(J,2)
-                test_limb_feat{j} = [test_limb_feat{j}; limb_feat{a,s,e}(:, (j-1)*limbdim+1:j*limbdim)];
-            end
-            test_af_info = [test_af_info; repmat([a,s,e], [size(limb_feat{a,s,e},1),1])];
-            test_n_frames{a,s,e} = size(limb_feat{a,s,e},1);
-        end
-    end
-end
-
-%% cluster 
-% run('../util/vlfeat-0.9.18/toolbox/vl_setup.m');
-ctr = cell(size(J,2),1);
-train_idx = cell(size(J,2),1);
-for j = 1:size(J,2)
-    [train_idx{j}, ctr{j}] = kmeans(train_limb_feat{j}, k_cluster(j), 'emptyaction', 'singleton');
-end
-
-%% quantization
-test_idx = cell(size(J,2),1);
-for j = 1:size(J,2)
-    test_idx{j} = zeros(size(test_limb_feat{j},1),1);
-    for f = 1:size(test_limb_feat{j},1)
-        [~,test_idx{j}(f)] = min(sum((repmat(test_limb_feat{j}(f,:),[k_cluster(j),1]) - ctr{j}).^2, 2));
-    end
-end
-
-save ../result/limb_kmeans.mat ctr train_idx train_af_info test_idx test_af_info train_n_frames test_n_frames
+% train_limb_feat = cell(size(J,2),1);
+% train_af_info = [];
+% train_n_frames = cell(20,10,3);
+% 
+% for a = 1:20
+%     for s = 1:10
+%         for e = 1:2
+%             if size(limb_feat{a,s,e},1) == 0 
+%                 continue; 
+%             end
+%             for j = 1:size(J,2)
+%                 train_limb_feat{j} = [train_limb_feat{j}; limb_feat{a,s,e}(:, (j-1)*limbdim+1:j*limbdim)];
+%             end
+%             train_af_info = [train_af_info; repmat([a,s,e], [size(limb_feat{a,s,e},1),1])];
+%             train_n_frames{a,s,e} = size(limb_feat{a,s,e},1);
+%         end
+%     end
+% end
+% 
+% test_limb_feat = cell(size(J,2),1);
+% test_af_info = [];
+% test_n_frames = cell(20,10,3);
+% for a = 1:20
+%     for s = 1:10
+%         for e = 3:3
+%             if size(limb_feat{a,s,e},1) == 0 
+%                 continue; 
+%             end
+%             for j = 1:size(J,2)
+%                 test_limb_feat{j} = [test_limb_feat{j}; limb_feat{a,s,e}(:, (j-1)*limbdim+1:j*limbdim)];
+%             end
+%             test_af_info = [test_af_info; repmat([a,s,e], [size(limb_feat{a,s,e},1),1])];
+%             test_n_frames{a,s,e} = size(limb_feat{a,s,e},1);
+%         end
+%     end
+% end
+% 
+% %% cluster 
+% % run('../util/vlfeat-0.9.18/toolbox/vl_setup.m');
+% ctr = cell(size(J,2),1);
+% train_idx = cell(size(J,2),1);
+% for j = 1:size(J,2)
+%     [train_idx{j}, ctr{j}] = kmeans(train_limb_feat{j}, k_cluster(j), 'emptyaction', 'singleton');
+% end
+% 
+% %% quantization
+% test_idx = cell(size(J,2),1);
+% for j = 1:size(J,2)
+%     test_idx{j} = zeros(size(test_limb_feat{j},1),1);
+%     for f = 1:size(test_limb_feat{j},1)
+%         [~,test_idx{j}(f)] = min(sum((repmat(test_limb_feat{j}(f,:),[k_cluster(j),1]) - ctr{j}).^2, 2));
+%     end
+% end
+% 
+% save ../result/limb_kmeans.mat ctr train_idx train_af_info test_idx test_af_info train_n_frames test_n_frames

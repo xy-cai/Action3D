@@ -147,32 +147,32 @@ end
 % directed_area{a,s,e}{f,j} action a, subject s, environment e, frame f,
 % limb j; f start from 2
 
-display('extr area 19*3');
-directed_area = cell(20,10,3);
-
-for a = 1:20
-    for s = 1:10
-        for e = 1:3
-            dataIn = joint_data{a,s,e};
-            directed_area_one_video = cell(size(dataIn,2),size(J,2));
-            for f = 2:size(dataIn,2)
-                for j = 1:size(J,2)
-                    p1 = squeeze(dataIn(J(1,j),f,:));
-                    p2 = squeeze(dataIn(J(2,j),f,:));
-                    last_p1 = squeeze(dataIn(J(1,j),f-1,:));
-                    last_p2 = squeeze(dataIn(J(2,j),f-1,:));
-                    cur_limb = p2(1:3)-p1(1:3);
-                    last_limb = last_p2(1:3)-last_p1(1:3);
-                    norm_vec = cross(last_limb, cur_limb);
-                    directed_area_one_video{f,j} = [norm_vec; (p1(4)+p2(4)+last_p1(4)+last_p2(4))/4];
-                end
-            end
-            directed_area{a,s,e} = directed_area_one_video;
-        end
-    end
-end
-
-save '../result/feat/directed_area.mat' directed_area
+% display('extr area 19*3');
+% directed_area = cell(20,10,3);
+% 
+% for a = 1:20
+%     for s = 1:10
+%         for e = 1:3
+%             dataIn = joint_data{a,s,e};
+%             directed_area_one_video = cell(size(dataIn,2),size(J,2));
+%             for f = 2:size(dataIn,2)
+%                 for j = 1:size(J,2)
+%                     p1 = squeeze(dataIn(J(1,j),f,:));
+%                     p2 = squeeze(dataIn(J(2,j),f,:));
+%                     last_p1 = squeeze(dataIn(J(1,j),f-1,:));
+%                     last_p2 = squeeze(dataIn(J(2,j),f-1,:));
+%                     cur_limb = p2(1:3)-p1(1:3);
+%                     last_limb = last_p2(1:3)-last_p1(1:3);
+%                     norm_vec = cross(last_limb, cur_limb);
+%                     directed_area_one_video{f,j} = [norm_vec; (p1(4)+p2(4)+last_p1(4)+last_p2(4))/4];
+%                 end
+%             end
+%             directed_area{a,s,e} = directed_area_one_video;
+%         end
+%     end
+% end
+% 
+% save '../result/feat/directed_area.mat' directed_area
 
 %% relative position (20-1)*3 = 57 [ICCV13 GSGC-DL]
 % relative_position{a,s,e}{f,j} action a, subject s, environment e, frame f,
