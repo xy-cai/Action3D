@@ -52,6 +52,7 @@ for a = 1:20
     for train_len = 1 : train_num
         data = [data(:, 1 : end), ta_hmm{a}{train_len}];
     end
+    display(sprintf('%d\n',a));
     [mu0, Sigma0] = mixgauss_init(Q*M, data, cov_type);
     mu0 = reshape(mu0, [O Q M]);
     Sigma0 = reshape(Sigma0, [O O Q M]);

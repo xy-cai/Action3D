@@ -12,8 +12,8 @@ outputdim = 200;
 
 cnt = 0;
 for a = 1:20
-    for s = 1:10
-        for e = 1:2
+    for s = 1:5
+        for e = 1:3
             display(sprintf('%d,%d,%d',a,s,e));
             if size(limb_feat{a,s,e},1)~=0 && sum(sum(isnan(limb_feat{a,s,e})))==0
                 cnt = cnt + size(limb_feat{a,s,e},1);
@@ -24,8 +24,8 @@ end
 train_feat = zeros(cnt, size(limb_feat{1,1,1},2)+1);
 cnt = 1;
 for a = 1:20
-    for s = 1:10
-        for e = 1:2
+    for s = 1:5
+        for e = 1:3
             display(sprintf('%d,%d,%d',a,s,e));
             if size(limb_feat{a,s,e},1)~=0 && sum(sum(isnan(limb_feat{a,s,e})))==0
                 for f = 1:size(limb_feat{a,s,e},1)
@@ -39,8 +39,8 @@ end
 
 cnt = 0;
 for a = 1:20
-    for s = 1:10
-        for e = 3:3
+    for s = 6:10
+        for e = 1:3
             display(sprintf('%d,%d,%d',a,s,e));
             if size(limb_feat{a,s,e},1)~=0 && sum(sum(isnan(limb_feat{a,s,e})))==0
                 cnt = cnt + size(limb_feat{a,s,e},1);
@@ -51,8 +51,8 @@ end
 test_feat = zeros(cnt, size(limb_feat{1,1,1},2)+1);
 cnt = 1;
 for a = 1:20
-    for s = 1:10
-        for e = 3:3
+    for s = 6:10
+        for e = 1:3
             display(sprintf('%d,%d,%d',a,s,e));
             if size(limb_feat{a,s,e},1)~=0 && sum(sum(isnan(limb_feat{a,s,e})))==0
                 for f = 1:size(limb_feat{a,s,e},1)
@@ -126,16 +126,16 @@ opts.numepochs =  1;
 opts.batchsize = 100;
 nn = nntrain(nn, train_x, train_y, opts);
 nn = nnff(nn, train_x, zeros(size(train_x,1), nn.size(end)));
-train_feat = nn.a{end-1}(:,1:outputdim);
+train_feat = nn.a{end-1}(:,2:outputdim+1);
 nn = nnff(nn, test_x, zeros(size(test_x,1), nn.size(end)));
-test_feat = nn.a{end-1}(:,1:outputdim);
+test_feat = nn.a{end-1}(:,2:outputdim+1);
 
 
 featDL = cell(20,10,3);
 cnt = 1;
 for a = 1:20
-    for s = 1:10
-        for e = 1:2
+    for s = 1:5
+        for e = 1:3
             display(sprintf('%d,%d,%d',a,s,e));
             if size(limb_feat{a,s,e},1)~=0 && sum(sum(isnan(limb_feat{a,s,e})))==0
                 featDL{a,s,e} = zeros(size(limb_feat{a,s,e},1), outputdim);
@@ -149,8 +149,8 @@ for a = 1:20
 end
 cnt = 1;
 for a = 1:20
-    for s = 1:10
-        for e = 3:3
+    for s = 6:10
+        for e = 1:3
             display(sprintf('%d,%d,%d',a,s,e));
             if size(limb_feat{a,s,e},1)~=0 && sum(sum(isnan(limb_feat{a,s,e})))==0
                 featDL{a,s,e} = zeros(size(limb_feat{a,s,e},1), outputdim);
