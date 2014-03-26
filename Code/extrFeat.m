@@ -13,7 +13,7 @@ Jind = [12,13,14,15,16,17,18,19,11,10,1,2,3,4,5,6,7,8,9];
 %% load data
 
 % datapath = '../dataset/MSRAction3DSkeletonReal3D/';
-% joint_data = cell(20,10,10);
+% joint_data = cell(20,10,3);
 % for a = 1:20
 %     for s = 1:10
 %         for e = 1:3
