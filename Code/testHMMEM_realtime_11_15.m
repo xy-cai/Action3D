@@ -1,4 +1,4 @@
-function testHMMEM_realtime_11_15
+function testHMMEM
 
 %% load quantization feat
 load ../result/limb_feat.mat
@@ -12,8 +12,8 @@ n_te = 1;
 
 for a = 1:20
     n_ta = 1;
-    for s = 1:5
-        for e = 1:3
+    for s = 1:10
+        for e = 1:2
             if size(limb_feat{a,s,e},1) ~= 0
                 if (sum(sum(isnan(limb_feat{a,s,e})))==0)
                     ta_hmm{a}{n_ta,1} = limb_feat{a,s,e}';
@@ -26,8 +26,8 @@ end
 
 for a = 1:20
     n_te = 1;
-    for s = 6:10
-        for e = 1:3
+    for s = 1:10
+        for e = 3:3
             if size(limb_feat{a,s,e},1) ~= 0
                 if (sum(sum(isnan(limb_feat{a,s,e})))==0)
                     te_hmm{a}{n_te,1} = limb_feat{a,s,e}';
@@ -64,16 +64,20 @@ end
 load ../result/mhmm_20.mat
 
 rec = [];
-
 for r = 11:15
     confmat = zeros(20,20);
     for a = 1:20
         for j = 1:size(te_hmm{a},1)
             sco = zeros(20,1);
-            len = ceil(size(te_hmm{a}{j},2)*r/20);
+            len = ceil(size(te_hmm{a}{j},2)*r/40);
 %             len = size(te_hmm{a}{j},2);
+            if len >= 20 
+                st = len-20+1;
+            else 
+                st = 1;
+            end
             for hmm_a = 1:20
-                [loglik, error] = mhmm_logprob(te_hmm{a}{j}(:,1:len),...
+                [loglik, error] = mhmm_logprob(te_hmm{a}{j}(:,st:len),...
                     HMM{(hmm_a)}.prior, HMM{(hmm_a)}.transmat, HMM{(hmm_a)}.mu, HMM{(hmm_a)}.Sigma, HMM{(hmm_a)}.mixmat);
                 sco(hmm_a) = loglik;
             end

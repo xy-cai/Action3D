@@ -5,7 +5,11 @@ close all;
 clear all;
 J=[20     3     3     1     8     10    2     9    11   3   4    7     7     5     6    14    15    16  17;
     3     1     2     8    10     12    9    11    13   4   7    5     6    14    15    16    17    18  19];
-k_cluster = [3,3,3,6,6,6,6,6,6,3,3,3,3,4,4,4,4,4,4];
+
+Jhip = [7     7     5     6    14    15    16  17   7   4   3   3   3   1   8   10  2   9   11;
+        5     6    14    15    16    17    18  19   4   3  20   1   2   8  10   12  9  11   13];
+
+k_cluster = [3,3,4,4,4,4,4,4,3,3,3,3,3,6,6,6,6,6,6];
 % k_cluster = 3*ones(1,19);
 %% load data
 load ../result/limb_kmeans.mat
@@ -68,6 +72,8 @@ end
 fclose(fid);
 
 fid = fopen('../result/[SVM]limb_feat_histonotime_test.txt', 'w');
+cnt = 1;
+gt = [];
 for a = 1:20
     for s = 1:10
         for e = 3:3
@@ -77,11 +83,24 @@ for a = 1:20
                     fprintf(fid, ' %d:%d', i, test_histo{a,s,e}(i));
                 end
                 fprintf(fid, '\r\n');
+                gt(cnt) = a;
+                cnt = cnt+1;
             end
         end
     end
 end
 fclose(fid);
+
+% system('python ../util/libsvm-3.17/tools/easy.py ../result/[SVM]limb_feat_histonotime_train.txt ../result/[SVM]limb_feat_histonotime_test.txt')
+
+fid = fopen('[SVM]limb_feat_histonotime_test.txt.predict');
+res = fscanf(fid, '%d');
+confmat = zeros(20,20);
+for i = 1:size(res,1)
+    confmat(gt(i),res(i)) = confmat(gt(i),res(i))+1;
+end
+fclose(fid);
+save ../result/confmat_HistoNoTime.mat confmat
 
 % 82.7027
 % 69.697
